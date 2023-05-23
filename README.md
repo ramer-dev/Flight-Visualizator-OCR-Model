@@ -7,3 +7,5 @@ This repository is for KAC.
 python(conda) : 3.6   
 opencv   
 numpy : 1.19.2 (it can be change!)   
+
+아.. YOLO로 갈아 엎어야합니다...!
