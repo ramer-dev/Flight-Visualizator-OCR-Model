@@ -6,38 +6,40 @@ import math
 
 def image_split(img, bound, filename='', save=0):
     x, y, w, h = cv2.boundingRect(bound)
-    table_data = img[y:y + h, x:x + w]
+    padding = 15
+    table_data = img[y + padding:y + h - padding, x + padding:x + w - padding]
 
     col_count = 8
     row_count = 20
 
-    cell_width = round(w / col_count)
-    cell_height = round(h / row_count)
-    print(cell_height)
-    x_padding = 10
-    y_padding = 8
+    cell_width = round((w - padding * 2) / col_count)
+    cell_height = round((h - padding * 2) / row_count)
+    inner_padding = (1, 1, 1, 1)
     mask = np.zeros((cell_height, cell_width))
 
-    mask[y_padding: -y_padding, x_padding:-x_padding] = 1
+    mask[inner_padding[0]: -inner_padding[2], inner_padding[3]:-inner_padding[1]] = 1
 
-    coord = [x, y]
+    coord = [0, 0]
+    print(coord)
     img_arr = []
     for y_ in range(row_count):
         row = []
+        if y_ == 8:
+            break
+
         for x_ in range(col_count):
-            # if x_ == 0:
-            # continue
+            resize = table_data[coord[1]:coord[1] + cell_height, coord[0]:coord[0] + cell_width]
 
-            position = [coord[0], coord[1]]
-
-            # cv2.rectangle(img, (position[0], position[1]),
-            #               (position[0] + cell_width,
-            #                position[1] + cell_height), (255, 255, 255),
-            #               thickness=3)
-
-            resize = img[position[1]:position[1] + cell_height,
-                     position[0]:position[0] + cell_width]
-            # bitwise = cv2.multiply(resize,mask)
+            if len(resize) < len(mask) or len(resize[0]) < len(mask[0]):
+                resize = cv2.copyMakeBorder(
+                    resize,
+                    top=0,
+                    left=0,
+                    bottom=len(mask) - len(resize),
+                    right=len(mask[0]) - len(resize[0]),
+                    borderType=cv2.BORDER_CONSTANT,
+                    value=[0, 0, 0]
+                )
 
             bitwise = resize * mask
 
@@ -51,7 +53,6 @@ def image_split(img, bound, filename='', save=0):
                 value=[0, 0, 0]
             )
             resized_img = cv2.resize(border, dsize=(256, 256), interpolation=cv2.INTER_AREA)
-
 
             # cv2.floodFill(resized_img, None, (round(128 - cell_width / 2), round(128 - cell_height / 2)), 0)
 
@@ -90,24 +91,22 @@ def image_split(img, bound, filename='', save=0):
 
             row.append(resized_img)
 
-            cv2.imshow("ctr", resized_img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
             coord[0] += cell_width
-        if y_ > 2:
-            break
+
+            # cv2.imshow(str(y_), resized_img)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
+
 
         img_arr.append(row)
         coord[1] += cell_height
-        coord[0] = x
+        coord[0] = 0
 
     img_arr = np.array(img_arr)
 
     if save:
-        filename = filename.split('.')[0]
+        filename = filename.split('\\')[-1].split('.')[0]
         if not os.path.isdir(os.path.join(os.getcwd(), 'datasets', 'img', filename)):
-            print(os.getcwd())
             os.mkdir(os.path.join(os.getcwd(), 'datasets', 'img', filename))
 
         for i in range(len(img_arr)):
