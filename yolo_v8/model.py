@@ -16,11 +16,11 @@
 # # print(model.predict("URL_OF_YOUR_IMAGE", hosted=True, confidence=40, overlap=30).json())
 
 if __name__ == '__main__':
+    import os
     from ultralytics import YOLO
 
     model = YOLO("yolov8m.yaml")
 
-    model.train(data="C:/Users/gml40/PycharmProjects/Flight-Visualizator-OCR-Model/yolo_v8/dataset/data.yaml", epochs=250)
+    model.train(data=os.path.join(os.getcwd(), 'dataset', 'data.yaml'), epochs=250)
     metrics = model.val()
-    # results = model()
     path = model.export(format="onnx")
