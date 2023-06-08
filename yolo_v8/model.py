@@ -15,12 +15,12 @@
 # # infer on an image hosted elsewhere
 # # print(model.predict("URL_OF_YOUR_IMAGE", hosted=True, confidence=40, overlap=30).json())
 
+if __name__ == '__main__':
+    from ultralytics import YOLO
 
-from ultralytics import YOLO
+    model = YOLO("yolov8m.yaml")
 
-model = YOLO("yolov8n.yaml")
-
-model.train(data="D:/Pycharm_Project/FlightVisualizator_OCR/yolo_v8/dataset/data.yaml", epochs=10)
-metrics = model.val()
-# results = model()
-path = model.export(format="onnx")
+    model.train(data="C:/Users/gml40/PycharmProjects/Flight-Visualizator-OCR-Model/yolo_v8/dataset/data.yaml", epochs=250)
+    metrics = model.val()
+    # results = model()
+    path = model.export(format="onnx")
