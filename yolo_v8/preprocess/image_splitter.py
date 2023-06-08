@@ -24,8 +24,8 @@ def image_split(img, bound, filename='', save=0):
     img_arr = []
     for y_ in range(row_count):
         row = []
-        if y_ == 8:
-            break
+        # if y_ == 8:
+        #     break
 
         for x_ in range(col_count):
             resize = table_data[coord[1]:coord[1] + cell_height, coord[0]:coord[0] + cell_width]
