@@ -4,6 +4,7 @@ import os
 import math
 import shutil
 
+
 def image_split(img, bound, filename='', save=True):
     x, y, w, h = cv2.boundingRect(bound)
     padding = 15
@@ -113,7 +114,6 @@ def image_split(img, bound, filename='', save=True):
                 os.mkdir(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, str(i)))
 
             black_count = 0
-            flag = False
             for j in range(len(img_arr[i])):
                 if cv2.countNonZero(img_arr[i][j]) != 0:
                     cv2.imwrite(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, f'{i}', f'{j}.png'),
@@ -123,8 +123,6 @@ def image_split(img, bound, filename='', save=True):
 
                 if black_count > 3:
                     shutil.rmtree(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, str(i)))
-
-
 
                 # if not cv2.imwrite(
                 #         os.path.join(os.getcwd(),'datasets','img',f'{i}', f'{j}.png'),

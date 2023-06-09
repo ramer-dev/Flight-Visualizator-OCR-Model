@@ -23,9 +23,13 @@ def main():
     # Preprocess
     [site, directory] = preprocess(data)
 
-
     # Evaluate
-    print(site, directory)
+    # print(site, directory)
+    glob = directory + '/'
+
+    results = model(source=glob, stream=True, conf=0.4)
+    for i in results:
+        print(i)
 
     return 'main'
 
