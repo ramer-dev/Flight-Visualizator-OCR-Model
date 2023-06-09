@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 import os
 import math
+import shutil
 
-
-def image_split(img, bound, filename='', save=0):
+def image_split(img, bound, filename='', save=True):
     x, y, w, h = cv2.boundingRect(bound)
     padding = 15
     table_data = img[y + padding:y + h - padding, x + padding:x + w - padding]
@@ -20,7 +20,6 @@ def image_split(img, bound, filename='', save=0):
     mask[inner_padding[0]: -inner_padding[2], inner_padding[3]:-inner_padding[1]] = 1
 
     coord = [0, 0]
-    print(coord)
     img_arr = []
     for y_ in range(row_count):
         row = []
@@ -52,7 +51,7 @@ def image_split(img, bound, filename='', save=0):
                 borderType=cv2.BORDER_CONSTANT,
                 value=[0, 0, 0]
             )
-            resized_img = cv2.resize(border, dsize=(256, 256), interpolation=cv2.INTER_AREA)
+            resized_img = cv2.resize(border, dsize=(640, 640), interpolation=cv2.INTER_AREA)
 
             # cv2.floodFill(resized_img, None, (round(128 - cell_width / 2), round(128 - cell_height / 2)), 0)
 
@@ -97,7 +96,6 @@ def image_split(img, bound, filename='', save=0):
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
 
-
         img_arr.append(row)
         coord[1] += cell_height
         coord[0] = 0
@@ -105,17 +103,29 @@ def image_split(img, bound, filename='', save=0):
     img_arr = np.array(img_arr)
 
     if save:
+        # print(filename)
         filename = filename.split('\\')[-1].split('.')[0]
-        if not os.path.isdir(os.path.join(os.getcwd(), 'datasets', 'img', filename)):
-            os.mkdir(os.path.join(os.getcwd(), 'datasets', 'img', filename))
+        if not os.path.isdir(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename)):
+            os.mkdir(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename))
 
         for i in range(len(img_arr)):
-            if not os.path.isdir(os.path.join(os.getcwd(), 'datasets', 'img', filename, str(i))):
-                os.mkdir(os.path.join(os.getcwd(), 'datasets', 'img', filename, str(i)))
+            if not os.path.isdir(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, str(i))):
+                os.mkdir(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, str(i)))
+
+            black_count = 0
+            flag = False
             for j in range(len(img_arr[i])):
-                print(os.path.join(os.getcwd(), 'datasets', 'img', filename, f'{i}', f'{j}.png'))
-                cv2.imwrite(os.path.join(os.getcwd(), 'datasets', 'img', filename, f'{i}', f'{j}.png'),
-                            img_arr[i][j])
+                if cv2.countNonZero(img_arr[i][j]) != 0:
+                    cv2.imwrite(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, f'{i}', f'{j}.png'),
+                                img_arr[i][j])
+                else:
+                    black_count += 1
+
+                if black_count > 3:
+                    shutil.rmtree(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, str(i)))
+
+
+
                 # if not cv2.imwrite(
                 #         os.path.join(os.getcwd(),'datasets','img',f'{i}', f'{j}.png'),
                 #         img_arr[i][j]):
@@ -123,6 +133,8 @@ def image_split(img, bound, filename='', save=0):
                 # cv2.imshow("test",img_arr[i][j])
                 # if cv2.waitKey() == 27:
                 #     break
+        print('image saved in :', os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename))
+
     return img_arr
 
     # return (row, col, height, width)

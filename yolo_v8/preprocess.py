@@ -1,7 +1,5 @@
 import cv2
 import argparse
-import numpy as np
-import os
 
 from preprocess import site_processor, image_split
 
@@ -37,10 +35,8 @@ if __name__ == "__main__":
 
     # 선택한 표지소 리턴
 
-    print(args.image)
     if args.scan:
         site = site_processor(thresh, contour_array[1])
         img_arr = image_split(thresh, contour_array[0], filename=args.image, save=args.save)
 
         print(site)
-        print(img_arr.shape)

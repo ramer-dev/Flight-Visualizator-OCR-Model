@@ -1,32 +1,30 @@
-#
-# device = "cuda" if torch.cuda.is_available() else "cpu"
-# model = torch.load('C:/Users/gml40/PycharmProjects/Flight-Visualizator-OCR-Model/yolo_v8/runs/detect/train/weights/last.pt', map_location=device)
-#
-# print(model)
-# with torch.no_grad():
-#     model.eval()
-#     input = "C:/Users/gml40/PycharmProjects/Flight-Visualizator-OCR-Model/yolo_v8/dataset/valid/images/0_png.rf.6b29f3242f1617147db1b5da409a057d.jpg"
-#     output = model(input)
-#     print(output)
+import torch, os, time
+from ultralytics import YOLO
+
+model = None
+
+
+def inference(file):
+    results = model(source=file, save=True)
+    results = sorted(results[0].boxes.data.tolist())
+
+    data = []
+    for i in results:
+        if i[5] != 10.0:
+            data.append(str(int(i[5])))
+        else:
+            data.append('.')
+
+    print(data)
+
 
 if __name__ == '__main__':
-    import torch, os
-    from ultralytics import YOLO
-
-    model = YOLO(os.path.join(os.getcwd(), 'runs', 'detect', 'train', 'weights', 'last.pt'))
+    model = YOLO(os.path.join(os.getcwd(), 'runs', 'detect', 'train', 'weights', 'best.pt'))
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
 
-    # result = model("C:/Users/gml40/PycharmProjects/Flight-Visualizator-OCR-Model/yolo_v8/dataset/valid/images/0_png.rf.3f6808bef1fb25a1f114cadd717ed5e8.jpg")
+    file_name = '0_png.rf.375dbc86621799ce67ded2d2f78c2656.jpg'
+    file_path = os.path.join(os.getcwd(), 'dataset', 'train', 'images', file_name)
 
-    file_name = '0_png.rf.6b29f3242f1617147db1b5da409a057d.jpg'
-    file_path = os.path.join(os.getcwd(), 'dataset', 'valid', 'images', file_name)
-
-    results = model(
-        source=file_path,
-        show=True, show_labels=True)
-
-    print(results[0].boxes.boxes)
-
-    # for result in results:
-    #     print(result)
+    # 추론 한번에 0.6초 소모
+    inference(file_path)
