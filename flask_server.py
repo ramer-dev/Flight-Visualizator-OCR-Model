@@ -1,4 +1,5 @@
 from flask import Flask, request
+from glob import glob
 
 print('-------------------------')
 print('initializing....', end='\t')
@@ -23,15 +24,30 @@ def main():
     # Preprocess
     [site, directory] = preprocess(data)
 
-    # Evaluate
+    # Evaluate Process
+
     # print(site, directory)
-    glob = directory + '/'
+    imgs = glob(directory + '\\*\\*.png')
 
-    results = model(source=glob, stream=True, conf=0.4)
-    for i in results:
-        print(i)
+    print(imgs)
+    results = model(source=imgs, stream=True, conf=0.4)
 
-    return 'main'
+    row = []
+    col = []
+
+    for box in results:
+
+        boxes = sorted(box.boxes.data.tolist())
+        data = ''
+        for j in boxes:
+            if j[5] != 10.0:
+                data += str(int(j[5]))
+            else:
+                data += '.'
+
+        col.append(data)
+
+    return col
 
 
 @app.route('/inference', methods=['POST'])
