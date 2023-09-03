@@ -10,6 +10,10 @@ def image_split(img, bound, filename='', save=True):
     padding = 15
     table_data = img[y + padding:y + h - padding, x + padding:x + w - padding]
 
+    # cv2.imshow('table', table_data)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
     col_count = 8
     row_count = 20
 
@@ -115,14 +119,14 @@ def image_split(img, bound, filename='', save=True):
 
             black_count = 0
             for j in range(len(img_arr[i])):
-                if cv2.countNonZero(img_arr[i][j]) != 0:
-                    cv2.imwrite(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, f'{i}', f'{j}.png'),
-                                img_arr[i][j])
-                else:
+                cv2.imwrite(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, f'{i}', f'{j}.png'),
+                            img_arr[i][j])
+                if cv2.countNonZero(img_arr[i][j]) < 20:
                     black_count += 1
 
                 if black_count > 3:
                     shutil.rmtree(os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename, str(i)))
+                    break
 
                 # if not cv2.imwrite(
                 #         os.path.join(os.getcwd(),'datasets','img',f'{i}', f'{j}.png'),
