@@ -19,7 +19,7 @@ if __name__ == '__main__':
     import os
     from ultralytics import YOLO
 
-    model = YOLO("yolov8m.yaml")
+    model = YOLO("yolov8n.pt")
 
     model.train(data=os.path.join(os.getcwd(), 'dataset', 'data.yaml'), epochs=250)
     metrics = model.val()
