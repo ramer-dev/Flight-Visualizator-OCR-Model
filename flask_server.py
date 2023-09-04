@@ -33,10 +33,9 @@ def score_validator(data: str):
 
 @app.route('/', methods=['POST'])
 def main():
-    print('request inference')
     data = request.json
-    print(data)
     filename = data['data']['originalname']
+    print(f'request inference \t :: {filename}')
 
     directory = f'./yolo_v8/result'
     os.makedirs(directory, exist_ok=True)
