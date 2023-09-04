@@ -14,7 +14,6 @@ def preprocess(image, save=True):
     img_name = os.path.join(os.getcwd(), 'yolo_v8', 'img', image)
 
     # img_name = os.path.join(os.getcwd(),'..', 'img', image)
-    print(img_name)
     image = cv2.imread(img_name)
 
 

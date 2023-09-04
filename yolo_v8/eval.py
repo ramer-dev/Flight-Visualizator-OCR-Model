@@ -15,7 +15,6 @@ def inference(file):
         else:
             data.append('.')
 
-    print(data)
 
 
 if __name__ == '__main__':

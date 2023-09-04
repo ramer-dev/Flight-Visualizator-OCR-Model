@@ -39,4 +39,4 @@ if __name__ == "__main__":
         site = site_processor(thresh, contour_array[1])
         img_arr = image_split(thresh, contour_array[0], filename=args.image, save=args.save)
 
-        print(site)
+        # print(site)
