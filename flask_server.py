@@ -18,6 +18,11 @@ app = Flask('ocr')
 model = None
 score_pattern = re.compile('\d1\d')
 
+print('loading model....', end='\t')
+model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train', 'weights', 'best.pt'))
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model.to(device)
+print('complete')
 
 def score_validator(data: str):
     if data == '1':
@@ -73,7 +78,7 @@ def main():
                 data += '.'
 
         if no == 0:
-            col['freq'] = data
+            col['frequency'] = data
         elif no == 1:
             col['txmain'] = score_validator(data)
         elif no == 2:
@@ -93,6 +98,7 @@ def main():
 
     with open(file_path, 'w') as json_file:
         json.dump(row, json_file)
+    print(row)
     return row
 
 
@@ -117,9 +123,5 @@ def inference():
 
 
 if __name__ == "__main__":
-    print('loading model....', end='\t')
-    model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train', 'weights', 'best.pt'))
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model.to(device)
-    print('complete')
+
     app.run(debug=True, port=7001)
