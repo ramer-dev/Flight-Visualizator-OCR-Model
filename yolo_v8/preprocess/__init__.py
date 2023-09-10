@@ -11,7 +11,7 @@ def preprocess(image, save=True):
     # parser.add_argument("--test", type=int, default=0, help="Popup Img Views")
     # args = parser.parse_args()
 
-    img_name = os.path.join(os.getcwd(), 'yolo_v8', 'img', image)
+    img_name = os.path.join('yolo_v8', 'img', image)
 
     # img_name = os.path.join(os.getcwd(),'..', 'img', image)
     image = cv2.imread(img_name)
