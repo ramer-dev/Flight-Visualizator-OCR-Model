@@ -65,9 +65,10 @@ def main():
                 return json.load(file)
 
         # Preprocess
-        [site, directory] = preprocess(filename)
+        [site, data_directory] = preprocess(filename)
+
         # Evaluate Process
-        imgs = glob(directory + '\\*\\*.png')
+        imgs = glob(data_directory + '\\*\\*.png')
 
         results = model(source=imgs, stream=True, conf=0.4)
 
@@ -138,4 +139,9 @@ def inference():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, port=7001)
+    print('loading model....', end='\t')
+    model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train', 'weights', 'best.pt'))
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device)
+    print('complete')
+    app.run(host='0.0.0.0', port=7001)

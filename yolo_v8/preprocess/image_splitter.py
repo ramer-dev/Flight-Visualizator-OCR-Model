@@ -111,14 +111,10 @@ def image_split(img, bound, filename='', save=True):
         # print(filename)
         filename = filename.split('\\')[-1].split('.')[0]
         path = os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename)
-        if not os.path.isdir(path):
-            os.mkdir(path)
-        else:
-            return
+        os.makedirs(path, exist_ok=True)
 
         for i in range(len(img_arr)):
-            if not os.path.isdir(filename) and not os.path.exists(filename):
-                os.mkdir(os.path.join(path, str(i)))
+            os.makedirs(os.path.join(path, str(i)), exist_ok=True)
 
             black_count = 0
             for j in range(len(img_arr[i])):
