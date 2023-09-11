@@ -56,7 +56,7 @@ def main():
         os.makedirs(original_img_dir, exist_ok=True)
         file_storage.save(os.path.join(original_img_dir, filename))
 
-        directory = f'./yolo_v8/result'
+        directory = os.path.join('.','yolo_v8','result')
         os.makedirs(directory, exist_ok=True)
         file_path = os.path.join(directory, str(filename).split('.')[0] + '.json')
 
@@ -68,8 +68,7 @@ def main():
         [site, data_directory] = preprocess(filename)
 
         # Evaluate Process
-        imgs = glob(data_directory + '\\*\\*.png')
-
+        imgs = glob(data_directory + f'{os.path.sep}*{os.path.sep}*.png')
         results = model(source=imgs, stream=True, conf=0.4)
 
         row = {"ocr": [], 'site': site}
@@ -77,6 +76,8 @@ def main():
         no = 0
 
         for box in results:
+            if not box:
+                continue
             # box 검출 좌표순으로 정렬
             boxes = sorted(box.boxes.data.tolist())
             data = ''
