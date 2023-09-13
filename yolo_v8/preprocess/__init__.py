@@ -47,5 +47,5 @@ def preprocess(image, save=True):
 
     site = site_processor(thresh, contour_array[1])
     img_final_name = img_name.split('.')[0].split(os.path.sep)[-1]
-    return [site['site_name'], os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', img_final_name)]
+    return site['site_name'], os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', img_final_name)
 

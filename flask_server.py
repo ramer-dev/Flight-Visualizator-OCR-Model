@@ -8,6 +8,7 @@ print('-------------------------')
 print('initializing....', end='\t')
 
 import torch, os
+import cv2
 from yolo_v8.preprocess import preprocess
 from ultralytics import YOLO
 
@@ -17,12 +18,6 @@ print('complete')
 app = Flask('ocr')
 model = None
 score_pattern = re.compile('\d1\d')
-
-print('loading model....', end='\t')
-model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train', 'weights', 'best.pt'))
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model.to(device)
-print('complete')
 
 
 def score_validator(data: str):
@@ -46,71 +41,71 @@ def test():
 def main():
     if 'data' in request.files:
         data = request.files['data']
-        filename = data.filename
-
+        [filename, ext] = data.filename.split('.')
+        
         print(f'request inference \t :: {filename}')
 
         # 원본 이미지 저장 장소
         file_storage = data
         original_img_dir = os.path.join(os.getcwd(), 'yolo_v8', 'img')
         os.makedirs(original_img_dir, exist_ok=True)
-        file_storage.save(os.path.join(original_img_dir, filename))
+        file_storage.save(os.path.join(original_img_dir, f'{filename}.{ext}'))
 
         directory = os.path.join('.','yolo_v8','result')
         os.makedirs(directory, exist_ok=True)
-        file_path = os.path.join(directory, str(filename).split('.')[0] + '.json')
+        file_path = os.path.join(directory, str(filename) + '.json')
 
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
                 return json.load(file)
 
         # Preprocess
-        [site, data_directory] = preprocess(filename)
-
+        site, img_path = preprocess(f'{filename}.{ext}')
         # Evaluate Process
-        imgs = glob(data_directory + f'{os.path.sep}*{os.path.sep}*.png')
+        # imgs = glob(os.path.join(os.getcwd(), 'yolo_v8', f'{os.path.sep}*{os.path.sep}*.png')
+        imgs = glob(img_path + f'{os.path.sep}*{os.path.sep}*.png')
+
         results = model(source=imgs, stream=True, conf=0.4)
 
         row = {"ocr": [], 'site': site}
-        col = {}
         no = 0
+        col = {}
+        
 
         for box in results:
-            if not box:
-                continue
+            sep = box.path.split(os.path.sep)
+            id, folder = sep[-1].split('.')[0], sep[-2]
             # box 검출 좌표순으로 정렬
             boxes = sorted(box.boxes.data.tolist())
             data = ''
             # 컬럼 데이터 리셋
-            if no == 8:
-                no = 0
+            if id == 0:
                 col = {}
 
             # Box내 데이터 리턴
             for j in boxes:
                 if j[5] != 10.0:
-                    data += str(int(j[5]))
+                    data += str(j[5])
                 else:
                     data += '.'
 
-            if no == 0:
+            if id == '0':
                 col['frequency'] = data
-            elif no == 1:
+            elif id == '1':
                 col['txmain'] = score_validator(data)
-            elif no == 2:
+            elif id == '2':
                 col['rxmain'] = score_validator(data)
-            elif no == 3:
+            elif id == '3':
                 col['txstby'] = score_validator(data)
-            elif no == 4:
+            elif id == '4':
                 col['rxstby'] = score_validator(data)
-            elif no == 5:
+            elif id == '5':
                 col['angle'] = data
-            elif no == 6:
+            elif id == '6':
                 col['distance'] = data
-            elif no == 7:
+            elif id == '7':
                 col['height'] = data
                 row['ocr'].append(col)
-            no += 1
 
         with open(file_path, 'w') as json_file:
             json.dump(row, json_file)
@@ -145,4 +140,4 @@ if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     print('complete')
-    app.run(host='0.0.0.0', port=7001)
+    app.run(host='0.0.0.0', port=7001, debug=True)

@@ -56,7 +56,7 @@ def image_split(img, bound, filename='', save=True):
                 borderType=cv2.BORDER_CONSTANT,
                 value=[0, 0, 0]
             )
-            resized_img = cv2.resize(border, dsize=(640, 640), interpolation=cv2.INTER_AREA)
+            resized_img = np.array(cv2.resize(border, dsize=(640, 640), interpolation=cv2.INTER_AREA))
 
             # cv2.floodFill(resized_img, None, (round(128 - cell_width / 2), round(128 - cell_height / 2)), 0)
 
@@ -101,7 +101,7 @@ def image_split(img, bound, filename='', save=True):
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
 
-        img_arr.append(row)
+        img_arr.append(np.array(row))
         coord[1] += cell_height
         coord[0] = 0
 
@@ -109,7 +109,7 @@ def image_split(img, bound, filename='', save=True):
 
     if save:
         # print(filename)
-        filename = filename.split('\\')[-1].split('.')[0]
+        filename = filename.split(os.path.sep)[-1].split('.')[0]
         path = os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename)
         os.makedirs(path, exist_ok=True)
 
@@ -135,7 +135,7 @@ def image_split(img, bound, filename='', save=True):
                 # if cv2.waitKey() == 27:
                 #     break
         print('image saved in :', os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename))
-
+    print(img_arr.shape)
     return img_arr
 
     # return (row, col, height, width)
