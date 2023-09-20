@@ -138,7 +138,6 @@ if __name__ == "__main__":
     print('loading model....', end='\t')
     model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train', 'weights', 'best.pt'))
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    # device = "cpu"
     model.to(device)
     print('complete')
     app.run(host='0.0.0.0', port=7001, debug=True)
