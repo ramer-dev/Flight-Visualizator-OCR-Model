@@ -7,7 +7,7 @@ import re
 print('-------------------------')
 print('initializing....', end='\t')
 
-import torch, os
+import torch, os, numpy as np
 import cv2
 from yolo_v8.preprocess import preprocess
 from ultralytics import YOLO
@@ -32,12 +32,12 @@ def score_validator(data: str):
         return None
 
 
-@app.route('/')
+@app.route('/ocr')
 def test():
     return 'test'
 
 
-@app.route('/', methods=['POST'])
+@app.route('/ocr', methods=['POST'])
 def main():
     if 'data' in request.files:
         data = request.files['data']
@@ -63,29 +63,26 @@ def main():
         site, img_path = preprocess(f'{filename}.{ext}')
         # Evaluate Process
         # imgs = glob(os.path.join(os.getcwd(), 'yolo_v8', f'{os.path.sep}*{os.path.sep}*.png')
-        imgs = glob(img_path + f'{os.path.sep}*{os.path.sep}*.png')
-
-        results = model(source=imgs, stream=True, conf=0.4)
+        imgs = sum([glob(img_path + f'{os.path.sep}{i}{os.path.sep}*.png') for i in range(0,20)],[])
+        results = model(source=imgs, conf=0.5, stream=True)
 
         row = {"ocr": [], 'site': site}
-        no = 0
         col = {}
         
-
+        
         for box in results:
             sep = box.path.split(os.path.sep)
+            
             id, folder = sep[-1].split('.')[0], sep[-2]
             # box 검출 좌표순으로 정렬
             boxes = sorted(box.boxes.data.tolist())
             data = ''
             # 컬럼 데이터 리셋
-            if id == 0:
-                col = {}
 
             # Box내 데이터 리턴
             for j in boxes:
                 if j[5] != 10.0:
-                    data += str(j[5])
+                    data += str(int(j[5]))
                 else:
                     data += '.'
 
@@ -106,9 +103,12 @@ def main():
             elif id == '7':
                 col['height'] = data
                 row['ocr'].append(col)
+                print(f'row : {folder} | content : {col} ')
+                col = {}
 
         with open(file_path, 'w') as json_file:
             json.dump(row, json_file)
+
         return row
     else:
         return Response(status=400)
@@ -138,6 +138,7 @@ if __name__ == "__main__":
     print('loading model....', end='\t')
     model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train', 'weights', 'best.pt'))
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    # device = "cpu"
     model.to(device)
     print('complete')
     app.run(host='0.0.0.0', port=7001, debug=True)

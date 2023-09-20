@@ -135,7 +135,6 @@ def image_split(img, bound, filename='', save=True):
                 # if cv2.waitKey() == 27:
                 #     break
         print('image saved in :', os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename))
-    print(img_arr.shape)
     return img_arr
 
     # return (row, col, height, width)
