@@ -4,5 +4,6 @@
 /yolo_v8/datasets
 /yolov8n.pt
 /yolo_v8/runs
+/yolo_v8/img
 /img
 *.pyc
