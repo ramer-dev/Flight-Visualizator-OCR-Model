@@ -1,16 +1,17 @@
 import json
-
-from flask import Flask, request, Response
-from glob import glob
 import re
+from glob import glob
+
+import os
+import torch
+from flask import Flask, request, Response
+from ultralytics import YOLO
+
+from yolo_v8.preprocess import preprocess
 
 print('-------------------------')
 print('initializing....', end='\t')
 
-import torch, os, numpy as np
-import cv2
-from yolo_v8.preprocess import preprocess
-from ultralytics import YOLO
 
 print('complete')
 # load_inference = load.signatures["serving_default"]  # 이게 무슨뜻?
@@ -42,7 +43,7 @@ def main():
     if 'data' in request.files:
         data = request.files['data']
         [filename, ext] = data.filename.split('.')
-        
+
         print(f'request inference \t :: {filename}')
 
         # 원본 이미지 저장 장소
@@ -51,7 +52,7 @@ def main():
         os.makedirs(original_img_dir, exist_ok=True)
         file_storage.save(os.path.join(original_img_dir, f'{filename}.{ext}'))
 
-        directory = os.path.join('.','yolo_v8','result')
+        directory = os.path.join('.', 'yolo_v8', 'result')
         os.makedirs(directory, exist_ok=True)
         file_path = os.path.join(directory, str(filename) + '.json')
 
@@ -60,19 +61,18 @@ def main():
                 return json.load(file)
 
         # Preprocess
-        site, img_path = preprocess(f'{filename}.{ext}')
+        site, img_path = preprocess(data.filename)
         # Evaluate Process
         # imgs = glob(os.path.join(os.getcwd(), 'yolo_v8', f'{os.path.sep}*{os.path.sep}*.png')
-        imgs = sum([glob(img_path + f'{os.path.sep}{i}{os.path.sep}*.png') for i in range(0,20)],[])
+        imgs = sum([glob(img_path + f'{os.path.sep}{i}{os.path.sep}*.png') for i in range(0, 20)], [])
         results = model(source=imgs, conf=0.5, stream=True)
 
         row = {"ocr": [], 'site': site}
         col = {}
-        
-        
+
         for box in results:
             sep = box.path.split(os.path.sep)
-            
+
             id, folder = sep[-1].split('.')[0], sep[-2]
             # box 검출 좌표순으로 정렬
             boxes = sorted(box.boxes.data.tolist())

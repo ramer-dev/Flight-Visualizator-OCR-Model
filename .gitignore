@@ -1,3 +1,4 @@
+.vscode
 .idea
 /yolo_v8/result
 /yolo_v8/dataset
@@ -6,4 +7,5 @@
 /yolo_v8/runs
 /yolo_v8/img
 /img
+/scan
 *.pyc
