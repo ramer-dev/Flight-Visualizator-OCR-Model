@@ -4,7 +4,7 @@ from .image_splitter import image_split
 import cv2, os
 
 
-def preprocess(image_path, save=True):
+def preprocess(image_file_name, image_path=f'{os.path.sep}.', save=True):
     # parser = argparse.ArgumentParser()
 
     # parser.add_argument("--image", type=str, required=True, help="image_name")
@@ -13,15 +13,16 @@ def preprocess(image_path, save=True):
     [filename, ext] = image_path.split(os.path.sep)[-1].split('.')
     # img_name = os.path.join('yolo_v8', 'img', filename)
 
-    # img_name = os.path.join(os.getcwd(),'..', 'img', image)
-    image = cv2.imread(image_path)
+    img_name = os.path.join(os.getcwd(),'yolo_v8', 'img', image_file_name)
+    image = cv2.imread(img_name)
+    # image = cv2.imread(image_path)
 
     img = image
+    print(img_name)
     # cv2.imshow("ctr", image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    if len(image.shape) == 3:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         
     img = cv2.GaussianBlur(img, (3, 7), 0)
 
@@ -47,5 +48,5 @@ def preprocess(image_path, save=True):
     img_arr = image_split(thresh, contour_array[0], filename=image_path, save=save)
 
     site = site_processor(thresh, contour_array[1])
-    return site['site_name'], os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename)
+    return site['site_name'], os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', image_file_name)
 

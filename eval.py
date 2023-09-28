@@ -5,7 +5,7 @@ from yolo_v8.preprocess import preprocess
 
 model = None
 score_pattern = re.compile('\d1\d')
-
+score_number = re.compile('\d\d')
 def score_validator(data: str):
     if data == '1':
         return None
@@ -14,6 +14,9 @@ def score_validator(data: str):
         score = re.findall(score_pattern, data)[0]
         score_slash = f"{score[0]}/{score[2]}"
         return score_slash
+    if score_number.match(data):
+        score = re.findall(score_number, data)[0]
+        return f'{score[0]}/{score[1]}'
     else:
         return None
 
@@ -39,7 +42,7 @@ def inference(file):
 
         id, folder = sep[-1].split('.')[0], sep[-2]
         
-        os.makedirs(os.path.join(img_path,  folder, id), exist_ok=True)
+        os.makedirs(os.path.join(img_path,  folder), exist_ok=True)
 
         txt = open(os.path.join(img_path,  folder, f'{id}.txt'), 'w')
 

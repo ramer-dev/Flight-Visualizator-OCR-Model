@@ -14,13 +14,17 @@
 #
 # # infer on an image hosted elsewhere
 # # print(model.predict("URL_OF_YOUR_IMAGE", hosted=True, confidence=40, overlap=30).json())
+import os, torch
+device = "cuda" if torch.cuda.is_available() else "cpu"
+if device == 'cuda':
+    torch.cuda.set_device(0)
 
 if __name__ == '__main__':
-    import os
     from ultralytics import YOLO
-
-    model = YOLO("yolov8n.pt")
-
-    model.train(data=os.path.join(os.getcwd(), 'dataset', 'data.yaml'), epochs=250)
+    
+    model = YOLO(os.path.join(os.getcwd(),'runs','detect','train3','weights','last.pt'))
+    # model = YOLO('yolov8n.pt')
+    model.train(resume=True)
+    # model.train(data=os.path.join(os.getcwd(), 'dataset', 'data.yaml'), epochs=250)
     metrics = model.val()
     path = model.export(format="onnx")

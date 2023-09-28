@@ -61,6 +61,7 @@ def main():
                 return json.load(file)
 
         # Preprocess
+        print(data.filename)
         site, img_path = preprocess(data.filename)
         # Evaluate Process
         # imgs = glob(os.path.join(os.getcwd(), 'yolo_v8', f'{os.path.sep}*{os.path.sep}*.png')
@@ -136,7 +137,7 @@ def inference():
 
 if __name__ == "__main__":
     print('loading model....', end='\t')
-    model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train', 'weights', 'best.pt'))
+    model = YOLO(os.path.join(os.getcwd(), 'yolo_v8', 'runs', 'detect', 'train3', 'weights', 'best.pt'))
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     print('complete')
