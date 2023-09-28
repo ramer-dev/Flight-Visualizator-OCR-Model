@@ -18,11 +18,11 @@ def preprocess(image_file_name, image_path=f'{os.path.sep}.', save=True):
     # image = cv2.imread(image_path)
 
     img = image
-    print(img_name)
     # cv2.imshow("ctr", image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    if(len(img.shape) == 3):
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         
     img = cv2.GaussianBlur(img, (3, 7), 0)
 
@@ -34,8 +34,8 @@ def preprocess(image_file_name, image_path=f'{os.path.sep}.', save=True):
     # cv2.imshow("ctr", thresh)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-
-    contours, _ = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contour_array = sorted(contours, key=cv2.contourArea, reverse=True)
 
     # if args.test:
