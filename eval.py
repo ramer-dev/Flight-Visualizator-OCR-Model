@@ -27,7 +27,7 @@ def inference(file):
     os.makedirs(directory, exist_ok=True)
     file_path = os.path.join(directory, str(filename) + '.json')
 
-    site, img_path = preprocess(file)
+    site, img_path = preprocess(file_path=file)
     # Evaluate Process
     # imgs = glob(os.path.join(os.getcwd(), 'yolo_v8', f'{os.path.sep}*{os.path.sep}*.png')
     imgs = sum(

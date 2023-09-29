@@ -22,9 +22,11 @@ if device == 'cuda':
 if __name__ == '__main__':
     from ultralytics import YOLO
     
-    model = YOLO(os.path.join(os.getcwd(),'runs','detect','train3','weights','last.pt'))
-    # model = YOLO('yolov8n.pt')
-    model.train(resume=True)
-    # model.train(data=os.path.join(os.getcwd(), 'dataset', 'data.yaml'), epochs=250)
+    # model = YOLO(os.path.join(os.getcwd(),'runs','detect','train3','weights','last.pt'))
+    # model.train(resume=True)
+
+    model = YOLO('yolov8n.pt')
+    model.train(data=os.path.join(os.getcwd(), 'dataset', 'data.yaml'), epochs=250, batch=8)
+
     metrics = model.val()
     path = model.export(format="onnx")
