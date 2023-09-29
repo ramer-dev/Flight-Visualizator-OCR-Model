@@ -5,7 +5,7 @@ import math
 import shutil
 
 
-def image_split(img, bound, filename='', save=True):
+def image_split(img, bound, file_path='', save=True):
     x, y, w, h = cv2.boundingRect(bound)
     padding = 15
     table_data = img[y + padding:y + h - padding, x + padding:x + w - padding]
@@ -108,10 +108,10 @@ def image_split(img, bound, filename='', save=True):
     img_arr = np.array(img_arr)
 
     if save:
-        # print(filename)
-        filename = filename.split(os.path.sep)[-1].split('.')[0]
+        filename = file_path.split(os.path.sep)[-1].split('.')[0]
         path = os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename)
         os.makedirs(path, exist_ok=True)
+        print(filename, path)
 
         for i in range(len(img_arr)):
             os.makedirs(os.path.join(path, str(i)), exist_ok=True)

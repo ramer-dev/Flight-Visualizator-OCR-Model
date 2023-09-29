@@ -5,14 +5,13 @@ import cv2
 import os
 
 
-def preprocess(image_file_name=None, image_path=f'{os.path.sep}.', save=True):
+def preprocess(image_path=f'{os.path.sep}.', save=True):
 
     # 이미지 패스가 주어졌다면 파일명과 확장자 변수화
     [filename, ext] = image_path.split(os.path.sep)[-1].split('.')
 
     # 불러올 이미지 경로 지정
-    img_name = os.path.join(os.getcwd(), 'yolo_v8', 'img',
-                            image_file_name or f'{filename}.{ext}')
+    img_name = os.path.join(os.getcwd(), 'yolo_v8', 'img', f'{filename}.{ext}')
     image = cv2.imread(img_name)
 
     # 이미지가 컬러(RGB or BGR)이라면 그레이스케일로 변환
@@ -33,8 +32,8 @@ def preprocess(image_file_name=None, image_path=f'{os.path.sep}.', save=True):
 
     # 이미지를 칸마다 쪼갬
     img_arr = image_split(
-        thresh, contour_array[0], filename=image_path, save=save)
+        thresh, contour_array[0], file_path=image_path, save=save)
 
     # 선택한 표지소 리턴
     site = site_processor(thresh, contour_array[1])
-    return site['site_name'], os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', image_file_name or f'{filename}.{ext}')
+    return site['site_name'], os.path.join(os.getcwd(), 'yolo_v8', 'datasets', 'img', filename)

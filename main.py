@@ -36,7 +36,7 @@ def score_validator(data: str):
 
     # NN 형식으로 인식될 경우
     if score_digit_pattern.match(data):
-        score = re.findall(score_pattern, data)[0]
+        score = re.findall(score_digit_pattern, data)[0]
         score_slash = f"{score[0]}/{score[1]}"
         return score_slash
 
@@ -73,8 +73,8 @@ def main():
                 return json.load(file)
 
         # 전처리 모듈 실행
-        site, img_path = preprocess(image_file_name=data.filename)
-
+        site, img_path = preprocess(image_path=os.path.join(original_img_dir,data.filename))
+        print('after preprocess', img_path)
         # 이미지 전처리 결과를 차례대로 배열로 불러와 Flat하게 반환 후 해당 배열 모델에 입력
         imgs = sum(
             [glob(img_path + f'{os.path.sep}{i}{os.path.sep}*.png') for i in range(0, 20)], [])
