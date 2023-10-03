@@ -31,13 +31,13 @@ def score_validator(data: str):
     # N1N 형식으로 입력될 경우
     if score_pattern.match(data):
         score = re.findall(score_pattern, data)[0]
-        score_slash = f"{score[0]}/{score[2]}"
+        score_slash = f"{score[0]}|{score[2]}"
         return score_slash
 
     # NN 형식으로 인식될 경우
     if score_digit_pattern.match(data):
         score = re.findall(score_digit_pattern, data)[0]
-        score_slash = f"{score[0]}/{score[1]}"
+        score_slash = f"{score[0]}|{score[1]}"
         return score_slash
 
     else:
@@ -119,6 +119,8 @@ def main():
                 col['distance'] = data
             elif id == '7':
                 col['height'] = data
+
+            if len(col) == 8:
                 row['ocr'].append(col)
                 print(f'row : {folder} | content : {col} ')
                 col = {}
