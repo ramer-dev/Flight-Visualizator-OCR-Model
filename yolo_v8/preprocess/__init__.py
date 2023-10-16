@@ -14,12 +14,14 @@ def preprocess(image_path=f'{os.path.sep}.', save=True):
     img_name = os.path.join(os.getcwd(), 'yolo_v8', 'img', f'{filename}.{ext}')
     image = cv2.imread(img_name)
 
+    resize = cv2.resize(image, dsize=(1651, 2335), interpolation=cv2.INTER_AREA)
+
     # 이미지가 컬러(RGB or BGR)이라면 그레이스케일로 변환
-    if (len(image.shape) == 3):
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    if (len(resize.shape) == 3):
+        image = cv2.cvtColor(resize, cv2.COLOR_BGR2GRAY)
 
     # 노이즈 제거 전처리 (가우시안 블러)
-    image = cv2.GaussianBlur(image, (3, 7), 0)
+    image = cv2.GaussianBlur(resize, (3, 7), 0)
 
     # 쓰레시홀드 임계치 지정 (이진화)
     ret, thresh = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY_INV)
