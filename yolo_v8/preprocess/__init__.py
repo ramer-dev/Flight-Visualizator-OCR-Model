@@ -15,10 +15,13 @@ def preprocess(image_path=f'{os.path.sep}.', save=True):
     image = cv2.imread(img_name)
 
     resize = cv2.resize(image, dsize=(1651, 2335), interpolation=cv2.INTER_AREA)
-
+    gray_image = None
+    
     # 이미지가 컬러(RGB or BGR)이라면 그레이스케일로 변환
     if (len(resize.shape) == 3):
-        image = cv2.cvtColor(resize, cv2.COLOR_BGR2GRAY)
+        gray_image = cv2.cvtColor(resize, cv2.COLOR_BGR2GRAY)
+    else:
+        gray_image = resize
 
     # 노이즈 제거 전처리 (가우시안 블러)
     image = cv2.GaussianBlur(resize, (3, 7), 0)

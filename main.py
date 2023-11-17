@@ -8,6 +8,7 @@ from ultralytics import YOLO
 
 from yolo_v8.preprocess import preprocess
 
+print('flycheck ocr ver 1.0.1')
 print('-------------------------')
 print('initializing....', end='\t')
 
